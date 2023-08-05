@@ -86,6 +86,10 @@ EOF
 #            git clone --branch feature/lists https://github.com/morozovme/koa_app.git koa_app_lists
 #            cd koa_app_lists && sudo docker-compose up --detach
             sudo apt-get install npm -y
+            cd ..
+            git clone -b feature/ubuforwin https://github.com/morozovme/rvproxy.git
+            sudo docker build -t rvproxy .
+            sudo docker run -d -p 80:80 rvproxy
 #            cd backend && sudo npm install && sudo ./databasemigration.sh
 #            
 #            #git clone https://github.com/morozovme/nodejs_streaming_app.git
