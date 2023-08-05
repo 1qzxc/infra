@@ -7,13 +7,13 @@ IMAGE_NAME = "generic/ubuntu2004"
 Vagrant.configure("2") do |config|
     config.ssh.insert_key = 'false'
     config.vm.provider :virtualbox do |virtualbox|
-        virtualbox.memory = 4096
-        virtualbox.cpus = 2
+        virtualbox.memory = 8172
+        virtualbox.cpus = 4
     end
       
     config.vm.define "ubuforwin" do |master|
         master.vm.box = IMAGE_NAME
-        master.vm.network "public_network", mode: "bridge", ip: "192.168.1.180"
+        master.vm.network "public_network", mode: "bridge", ip: "192.168.1.199"
         #master.ssh.private_key_path = "~/.ssh/id_rsa"
         master.ssh.forward_agent = true
         master.vm.hostname = "ubuforwin"
@@ -55,11 +55,14 @@ EOF
             #cd ../../
             # mount smb for volume storage
             sudo mkdir /mnt/win_share
-            sudo mount -t cifs //192.168.1.147/464 /mnt/win_share -o user=guest,password=''
+            sudo mount -t cifs //192.168.1.147/465 /mnt/win_share -o user=guest,password=''
             #scp -r root@192.168.1.147:/mnt/464/linuxdata ./
-            sudo cp -r /mnt/win_share/linuxdata/mikefrostov/MondayJanuary102022/volumes/*  /var/lib/docker/volumes/
-            git clone -b feature/MC-12-new-design https://github.com/morozovme/main_app.git
-            sudo cp -r /mnt/win_share/linuxdata/mikefrostov/MondayJanuary102022/uploads/uploads/*  /home/vagrant/main_app/app/public/uploads
+            DAY=SaturdayAugust052023
+            #sudo cp -r /mnt/win_share/files/linuxdata/mikefrostov/MondayJanuary102022/volumes/*  /var/lib/docker/volumes/
+            sudo cp -r /mnt/win_share/files/linuxdata/mikefrostov/$DAY/volumes/*  /var/lib/docker/volumes/
+            git clone -b ubuforwin-workspace https://github.com/morozovme/main_app.git
+            #sudo cp -r /mnt/win_share/files/linuxdata/mikefrostov/MondayJanuary102022/uploads/uploads/*  /home/vagrant/main_app/app/public/uploads
+            sudo cp -r /mnt/win_share/files/linuxdata/mikefrostov/$DAY/uploads/uploads/*  /home/vagrant/main_app/app/public/uploads
             pwd
             cd main_app
             sudo systemctl status docker
