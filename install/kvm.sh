@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-yum module install virt -y
+#yum module install virt -y
 yum install virt-install virt-viewer libguestfs-tools -y
 systemctl enable libvirtd.service
 systemctl start libvirtd.service
