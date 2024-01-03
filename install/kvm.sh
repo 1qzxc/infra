@@ -1,23 +1,24 @@
 #!/bin/bash
 set -e
-#yum module install virt -y
-yum install virt-install virt-viewer libguestfs-tools -y
-systemctl enable libvirtd.service
-systemctl start libvirtd.service
+
+dnf -y install qemu-kvm libvirt virt-install
+systemctl enable --now libvirtd
+
 lsmod | grep -i kvm
+
 yum install net-tools -y
+
 ownif=$(route | grep '^default' | grep -o '[^ ]*$')
-## need to implement check that brX already exists and add br(X+1)
-echo "BRIDGE=br0" >> /etc/sysconfig/network-scripts/ifcfg-$ownif
-echo 'DEVICE="br0"
-# I am getting ip from DHCP server # \
-BOOTPROTO="dhcp"
-IPV6INIT="yes"
-IPV6_AUTOCONF="yes"
-ONBOOT="yes"
-TYPE="Bridge"
-DELAY="0" ' > /etc/sysconfig/network-scripts/ifcfg-br0
-systemctl restart NetworkManager 
+
+nmcli connection add type bridge autoconnect yes con-name br0 ifname br0
+nmcli connection modify br0 ipv4.addresses 192.168.1.2/24 ipv4.method manual
+nmcli connection modify br0 ipv4.gateway 192.168.1.1
+nmcli connection modify br0 ipv4.dns 192.168.1.1
+nmcli connection modify br0 ipv4.dns-search srv.world
+nmcli connection del $ownif
+nmcli connection add type bridge-slave autoconnect yes con-name $ownif ifname $ownif master br0
+
+
 ##check and verify that no errors, continue
 firewall-cmd --permanent --zone=public --add-service vnc-server
 systemctl restart firewalld
