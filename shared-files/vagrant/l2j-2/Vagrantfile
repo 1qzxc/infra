@@ -1,0 +1,162 @@
+# shell provision halp:
+# https://automation-remarks.com/setting-vagrant/
+
+IMAGE_NAME = "generic/debian10"
+#N = 2
+
+Vagrant.configure("2") do |config|
+    config.ssh.insert_key = 'false'
+    config.vm.provider :virtualbox do |virtualbox|
+        virtualbox.memory = 4096
+        virtualbox.cpus = 2
+    end
+      
+    config.vm.define "l2j-debian" do |master|
+        master.vm.box = IMAGE_NAME
+        master.vm.network "public_network", mode: "bridge", ip: "192.168.1.210"
+        #master.ssh.private_key_path = "~/.ssh/id_rsa"
+        master.ssh.forward_agent = true
+        master.vm.hostname = "l2j-debian"
+        master.vm.provision "shell", privileged: false, inline: <<-SHELL
+            #!/bin/bash
+
+            set -e
+
+            sudo ip route del default via 10.0.2.2
+            sudo ip route add default via 192.168.1.1
+            sudo apt -y install software-properties-common dirmngr curl wget
+            sudo apt-get install git -y
+            sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8
+            curl -LsS -O https://downloads.mariadb.com/MariaDB/mariadb_repo_setup
+            sudo bash mariadb_repo_setup --mariadb-server-version=10.4
+            sudo apt update -y 
+            sudo apt install mariadb-server mariadb-client -y
+            sudo apt-get install -y wget apt-transport-https gnupg
+            sudo apt install unzip -y
+
+            # installation of some funky old JDK
+            #wget https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public
+            #cat /etc/os-release | grep VERSION_CODENAME | cut -d = -f 2
+            #gpg --no-default-keyring --keyring ./adoptopenjdk-keyring.gpg --import public
+            #gpg --no-default-keyring --keyring ./adoptopenjdk-keyring.gpg --export --output adoptopenjdk-archive-keyring.gpg 
+            #sudo mv adoptopenjdk-archive-keyring.gpg /usr/share/keyrings && sudo chown root:root /usr/share/keyrings/adoptopenjdk-archive-keyring.gpg 
+            #echo "deb [signed-by=/usr/share/keyrings/adoptopenjdk-archive-keyring.gpg] https://adoptopenjdk.jfrog.io/adoptopenjdk/deb buster main" | sudo tee /etc/apt/sources.list.d/adoptopenjdk.list
+            #sudo apt-get install adoptopenjdk-14-hotspot -y
+
+            #installation of oracle jdk17
+            wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.deb
+            sudo apt install ./jdk-17_linux-x64_bin.deb -y
+            sudo tee /etc/profile.d/jdk.sh <<EOF
+            export JAVA_HOME=/usr/lib/jvm/jdk-17/
+            export PATH=$PATH:/usr/lib/jvm/jdk-17/bin
+EOF
+            source /etc/profile.d/jdk.sh
+            #mkdir -p /opt/l2j/git && sudo cd /opt/l2j/git
+
+
+            # cloning sources 
+            git clone https://bitbucket.org/l2jserver/l2j-server-login.git
+            git clone https://bitbucket.org/l2jserver/l2j-server-game.git
+            git clone https://bitbucket.org/l2jserver/l2j-server-datapack.git
+            
+
+            # giving permissions
+            cd ~/l2j-server-login && chmod 755 mvnw && ./mvnw install
+            cd ~/l2j-server-game && chmod 755 mvnw && ./mvnw install
+            cd ~/l2j-server-datapack && chmod 755 mvnw && ./mvnw install
+            mkdir -p ~/l2j/server/login
+            unzip ~/l2j-server-login/target/l2j-server-login-2.6.5.2.zip -d ~/l2j/server/login
+            mkdir -p ~/l2j/server/game
+            unzip ~/l2j-server-game/target/l2j-server-game-2.6.3.0-SNAPSHOT.zip -d ~/l2j/server/game
+            unzip ~/l2j-server-datapack/target/l2j-server-datapack-2.6.3.0-SNAPSHOT.zip -d ~/l2j/server/game
+            mkdir -p ~/l2j/cli && cd ~/l2j/cli
+            git clone https://bitbucket.org/l2jserver/l2j-server-cli.git
+            cd l2j-server-cli  && chmod 755 mvnw && ./mvnw install
+            unzip ~/l2j/cli/l2j-server-cli/target/l2jcli-1.0.7.zip -d ~/l2j/cli
+            chmod 755 ~/l2j/cli/l2jcli.sh
+
+            cd ~/l2j/server/login && mkdir -p log
+            chmod 755 LoginServer_loop.sh
+            chmod 755 startLoginServer.sh
+            touch startSQLAccountManager.sh
+            chmod 755 startSQLAccountManager.sh
+            sudo tee startSQLAccountManager.sh <<EOF
+            #!/bin/sh
+            java -Djava.util.logging.config.file=console.cfg -cp ./../libs/*:l2jlogin.jar com.l2jserver.tools.accountmanager.SQLAccountManager
+EOF
+            #chmod 755 startSQLAccountManager.sh
+            cd ~/l2j/server/game && mkdir -p log
+            chmod 755 GameServer_loop.sh
+            chmod 755 startGameServer.sh
+
+
+            #sudo apt install ufw -y
+            #ufw allow 2106/tcp
+            #ufw allow 7777/tcp
+
+            ############# database manipulations uploads and structuring #########
+            sudo mysql --user="root" --password="" --database="mysql" --execute="CREATE OR REPLACE USER 'l2j'@'%' IDENTIFIED BY 'l2jserver2019';"
+            sudo mysql --user="root" --password="" --database="mysql" --execute="GRANT ALL PRIVILEGES ON *.* TO 'l2j'@'%' IDENTIFIED BY 'l2jserver2019';"
+            sudo mysql --user="root" --password="" --database="mysql" --execute="FLUSH PRIVILEGES;"
+            sudo mysql --user="root" --password="" --database="mysql" --execute="SET GLOBAL max_connections = 512;" 
+ 
+
+
+
+
+#            # l2j-cli stuff should be done manually!!!1 
+#            cd ~/l2j/cli/
+#            ./l2jcli.sh
+#            db install -sql /home/vagrant/l2j/server/login/sql/ -u l2j -p l2jserver2019 -m FULL -t LOGIN -c -mods
+#            db install -sql /home/vagrant/l2j/server/game/sql -u l2j -p l2jserver2019 -m FULL -t GAME -c -mods
+#            quit
+#            cd ~/l2j/cli
+#            ./l2jcli.sh
+#            account create -u Zoey76 -p 1q2w3e
+#            account create -u no0brus -p 1q2w3e
+#            account create -u solokate -p 1q2w3e
+#            quit
+#            cd ~/l2j/server/login
+#            ./startLoginServer.sh
+#            cd ~/l2j/server/game
+#            ./startGameServer.sh
+
+        SHELL
+
+
+
+# chef provisioning example
+    #    config.vm.provision :chef_solo do |chef|
+    #      chef.arguments = "--chef-license accept"
+    #      chef.cookbooks_path = "cookbooks"
+    #      chef.roles_path = "cookbooks/roles"
+    #      chef.add_role("vagrant")
+    #    end
+    end
+end
+
+#Vagrant.configure("2") do |config|
+#    config.ssh.insert_key = 'false'
+#    config.vm.provider :virtualbox do |v|
+#        v.memory = 2048
+#        v.cpus = 2
+#    end
+#
+#    (1..N).each do |i|
+#        config.vm.define "node-#{i}" do |node|
+#            node.vm.box = IMAGE_NAME
+#            node.vm.network "public_network", mode: "bridge", ip: "192.168.1.#{i + 170}"
+#            node.vm.hostname = "node-#{i}"
+#        end
+#    end
+#end
+
+
+##            sudo mkdir -p /etc/docker
+##            sudo touch /etc/docker/daemon.json
+##            sudo tee -a /etc/docker/daemon.json <<EOF
+##{
+##"registry-mirrors": ["http://192.168.1.88:6000"]
+##}
+##EOF
+##            curl http://192.168.1.88:6000/v2/_catalog

@@ -1,0 +1,25 @@
+# info: 
+# https://leopard.in.ua/2013/01/04/chef-solo-getting-started-part-1#.YALEJugzaUk
+chef install knife-solo
+chef gem install knife-solo
+chef gem install librarian-chef
+knife solo init .
+
+# for this need to add to path:
+# C:\opscode\chef-workstation\bin\ruby.exe
+librarian-chef init
+
+#add stuff to Cheffile
+librarian-chef install
+
+#prepare nodes
+knife solo prepare vagrant@192.168.1.170
+
+
+
+
+
+
+
+# path to binaries:
+#  c:\users\ktkt\appdata\local\chefdk\gem\ruby\2.7.0\bin

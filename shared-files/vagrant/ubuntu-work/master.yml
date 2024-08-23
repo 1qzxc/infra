@@ -1,0 +1,79 @@
+---
+- hosts: master
+  gather_facts: yes
+  become: yes
+  vars:
+    NODEJS_VERSION: "8"
+    ansible_distribution_release: "xenial" #trusty
+  tasks:
+
+    - name: Update and upgrade apt packages
+      become: true
+      apt:
+        upgrade: yes
+
+    - name: Install the gpg key for nodejs LTS
+      apt_key:
+        url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+        state: present
+
+    - name: Install the nodejs LTS repos
+      apt_repository:
+        repo: "deb https://deb.nodesource.com/node_{{ NODEJS_VERSION }}.x {{ ansible_distribution_release }} main"
+        state: present
+        update_cache: yes
+
+    - name: Install the nodejs
+      apt:
+        name: nodejs
+        state: present
+
+    - name: Clone bitbucket repo
+      git:
+        repo: https://github.com/mikefrostov/koa_app.git
+        dest: /home/vagrant/koa_app/
+        version: misc/ubuvm
+
+    - name: Clone bitbucket repo
+      git:
+        repo: https://github.com/mikefrostov/rust_programming.git
+        dest: /home/vagrant/rust_programming/
+        version: master
+
+    - name: Clone bitbucket repo
+      git:
+        repo: https://github.com/mikefrostov/linux_programming.git
+        dest: /home/vagrant/linux_programming/
+        version: master
+
+    - name: Ensure old versions of Docker are not installed.
+      package:
+        name:
+          - docker
+          - docker-engine
+        state: absent
+
+    - name: Ensure dependencies are installed.
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - gnupg2
+        state: present
+
+    - name: Update apt and install docker.io
+      apt: update_cache=yes name=docker.io state=latest
+
+#    - name: Add git creds.
+#      community.general.git_config:
+#        name: user.email
+#        repo: ~/koa_app
+#        scope: local
+#        value: 'm.e.morozov1@gmail.com'
+
+#    - name: Add git creds.
+#      community.general.git_config:
+#        name: user.name
+#        repo: ~/koa_app
+#        scope: local
+#        value: 'mikefrostov'
