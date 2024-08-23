@@ -1,0 +1,12 @@
+sudo virt-install \
+--name ubu18gpu \
+--ram 8192 \
+--disk path=/home/ubu18.qcow2,size=20 \
+--vcpus 2 \
+--os-type linux \
+--os-variant=ubuntu18.04 \
+--network bridge=virbr0 \
+--graphics vnc,listen=0.0.0.0,port=5901 --noautoconsole \
+--cdrom /home/ubu18.iso \
+--hostdev 07:00.0 \
+--hostdev 07:00.1

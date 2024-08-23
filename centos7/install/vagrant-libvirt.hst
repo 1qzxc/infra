@@ -1,0 +1,234 @@
+    1  clear
+    2  ls
+    3  yum install epel-release -y 
+    4  yum install wget curl git -y
+    5  git clone https://github.com/morozovme/infra.git
+    6  ls
+    7  cd infra/
+    8  ls
+    9  git checkout centos7
+   10  ls
+   11  ls install/
+   12  cat install/vagrantvirtualbox.sh 
+   13  vi /etc/systemd/logind.conf
+   14  systemctl restart systemd-logind.service
+   15  touch install/rubyrbenv.sh
+   16  vi install/rubyrbenv.sh 
+   17  touch install/buildvagrant.sh
+   18  vi install/buildvagrant.sh 
+   19  ls install/
+   20  cat install/kvm.sh 
+   21  chmod +x install/kvm.sh 
+   22  ./install/kvm.sh 
+   23  pwd
+   24  ls -la
+   25  ls -la infra/
+   26  rm -rf infra/.rbenv
+   27  ruby --version
+   28  rbenv
+   29  ls
+   30  ls -la
+   31  vi install/rubyrbenv.sh 
+   32  ./install/rubyrbenv.sh 
+   33  rbenv
+   34  clear
+   35  ls
+   36  cd infra/
+   37  ls
+   38  chmod +x install/rubyrbenv.sh 
+   39  ./install/rubyrbenv.sh 
+   40  vi install/rubyrbenv.sh 
+   41  ./install/rubyrbenv.sh 
+   42  rbenv
+   43  ruby --version
+   44  rbenv install --global 2.6.9
+   45  rbenv --global 2.6.9
+   46  rbenv install 2.6.9
+   47  rbenv --global install 2.6.9
+   48  rbenv
+   49  rbenv commands
+   50  rbenv global 2.6.9
+   51  rbenv install -v 2.6.9
+   52  rbenv rehash
+   53  rbenv install -v 2.6.9
+   54  clear
+   55  ls
+   56  cd infra/
+   57  ls
+   58  vi install/rubyrbenv.sh 
+   59  ./install/rubyrbenv.sh 
+   60  ls
+   61  ls -la
+   62  cd ..
+   63  ls -la
+   64  rm -rf .rbenv/
+   65  ./infra/install/rubyrbenv.sh 
+   66  rbenv install
+   67  rbenv global 2.6.9
+   68  rbenv install -v 2.6.9
+   69  ruby --version
+   70  rbenv global 2.6.9
+   71  ruby --version
+   72  ls
+   73  ls infra/install/vagrantinstall.sh 
+   74  cat infra/install/vagrantinstall.sh 
+   75  cat infra/install/vagrantvirtualbox.sh 
+   76  ls infra/install/
+   77  cat infra/install/buildvagrant.sh 
+   78  chmod +x infra/install/buildvagrant.sh 
+   79  ./infra/install/buildvagrant.sh 
+   80  docker ps
+   81  ls infra/install/
+   82  cat infra/install/dockerinst2.sh 
+   83  ./infra/install/dockerinst2.sh 
+   84  chmod +x infra/install/dockerinst2.sh 
+   85  ./infra/install/dockerinst2.sh 
+   86  ls /etc/system/
+   87  mkdir -p /etc/systemd/system/docker.service.d
+   88   touch /etc/systemd/system/docker.service.d/http-proxy.conf
+   89  vi /etc/systemd/system/docker.service.d/http-proxy.conf
+   90  curl http://192.168.1.147:3128/ca.crt > /usr/share/ca-certificates/docker_registry_proxy.crt
+   91  ls /usr
+   92* 
+   93  curl http://192.168.1.147:3128/ca.crt > /etc/pki/ca-trust/source/anchors/docker_registry_proxy.crt
+   94  update-ca-trust
+   95  echo "docker_registry_proxy.crt" >> /etc/ca-certificates.conf
+   96  update-ca-certificates --fresh
+   97  update-ca-trust
+   98  systemctl status docker
+   99  systemctl daemon-reload
+  100  systemctl status docker
+  101  dir
+  102  git clone https://github.com/morozovme/vagrant-kubernetes.git
+  103  cd vagrant-kubernetes/
+  104  docker run -it --rm   -e LIBVIRT_DEFAULT_URI   -v /var/run/libvirt/:/var/run/libvirt/   -v ~/.vagrant.d:/.vagrant.d   -v $(realpath "${PWD}"):${PWD}   -w $(realpath "${PWD}")   --network host   vagrantlibvirt/vagrant-libvirt:latest     vagrant status
+  105  useradd vagrant
+  106  passwd vagrant
+  107  usermod -aG wheel vagrant
+  108  docker run -it --rm   -e LIBVIRT_DEFAULT_URI   -v /var/run/libvirt/:/var/run/libvirt/   -v ~/.vagrant.d:/.vagrant.d   -v $(realpath "${PWD}"):${PWD}   -w $(realpath "${PWD}")   --network host   vagrantlibvirt/vagrant-libvirt:latest     vagrant status
+  109  groupadd vagrant
+  110  useradd -gvagrant vagrant
+  111  useradd -g vagrant vagrant
+  112  usermod -Gvagrant vagrant
+  113  docker run -it --rm   -e LIBVIRT_DEFAULT_URI   -v /var/run/libvirt/:/var/run/libvirt/   -v ~/.vagrant.d:/.vagrant.d   -v $(realpath "${PWD}"):${PWD}   -w $(realpath "${PWD}")   --network host   vagrantlibvirt/vagrant-libvirt:latest     vagrant status
+  114  groups
+  115  groupadd vagrant
+  116  groups -l
+  117  groups --help
+  118  groups vagrant
+  119  ls
+  120  vagrant plugin install vagrant-libvirt
+  121  vagrant plugin install vagrant-libvirt --plugin-source https://rubygems.org
+  122  vagrant plugin install vagrant-libvirt --plugin-source https://gems.rubygems.org
+  123* vagrant plugin install vagrant-libvirt --pl
+  124  vi ../vagrant/Gemfile
+  125  vagrant plugin install vagrant-libvirt --plugin-clear-sources --plugin-source https://gems.ruby-china.com
+  126  vagrant plugin install vagrant-libvirt --plugin-clean-sources --plugin-source https://gems.ruby-china.com
+  127  cd ../vagrant
+  128  ls
+  129  bundle install
+  130  cd ..
+  131  ls
+  132  ls -la
+  133  cd .vagrant.d/
+  134  ls
+  135  ls gems/
+  136  ls gems/2.6.9/
+  137  cd ..
+  138  ls
+  139  git clone https://github.com/vagrant-libvirt/vagrant-libvirt.git
+  140  cd vagrant-libvirt/
+  141  bundle install
+  142  gem install ruby-libvirt
+  143  yum install libvirt-dev
+  144  yum install libvirt-devel
+  145  bundle install
+  146  cd ..
+  147  ls -la
+  148  vagrant plugin install vagrant-libvirt --plugin-clean-sources --plugin-source https://gems.ruby-china.com
+  149  vagrant-libvirt
+  150  ls
+  151  ls vagrant-libvirt/
+  152  cd vagrant-libvirt/
+  153  bundle --binstubs exec
+  154  ls
+  155  ls exec/
+  156  ls 
+  157  cat entrypoint.sh 
+  158  ls
+  159  cat vagrant-libvirt.gemspec 
+  160  ls
+  161  cd exec/
+  162  ls
+  163  ./vagrant
+  164  vagrant --version
+  165  ./vagrant --version
+  166  ./vagrant plugin install vagrant-libvirt
+  167  ./vagrant plugin list
+  168  cd ..
+  169  ls
+  170  cat Dockerfile 
+  171  rake build
+  172  vagrant plugin install pkg/vagrant-libvirt-0.7.1.pre.34.gem 
+  173  vagrant plugin install ./pkg/vagrant-libvirt-0.7.1.pre.34.gem 
+  174  pwd
+  175  vagrant plugin install /root/vagrant-libvirt/pkg/vagrant-libvirt-0.7.1.pre.34.gem 
+  176  vagrant plugin install /root/vagrant-libvirt/pkg/vagrant-libvirt-0.7.1.pre.34.gem --plugin-clean-sources
+  177  gem install nokogiri
+  178  vagrant plugin install /root/vagrant-libvirt/pkg/vagrant-libvirt-0.7.1.pre.34.gem --plugin-clean-sources
+  179  gem install nokogiri -v 1.6.1
+  180  vagrant plugin install /root/vagrant-libvirt/pkg/vagrant-libvirt-0.7.1.pre.34.gem --plugin-clean-sources
+  181  ls ~/.gem/
+  182  ls ~/.gem/specs/
+  183  ls ~/.gem/specs/rubygems.org%443/
+  184  ls ~/.gem/specs/rubygems.org%443/quick/
+  185  gem which nokogiri
+  186  gem which nokogiri -v 1.6.1
+  187  gem which nokogiri -v 1.6
+  188  rbenv gem install nokogiri -v 1.6.1
+  189  cd ../vagrant
+  190  bundle install nokogiri
+  191  cd ../vagrant-libvirt/
+  192  ls
+  193  ls exec
+  194  cd ../vagrant
+  195  gem install nokogiri -v 1.6.1
+  196  vagrant plugin install /root/vagrant-libvirt/pkg/vagrant-libvirt-0.7.1.pre.34.gem --plugin-clean-sources
+  197  cd ..
+  198  gem install nokogiri -v 1.6.1
+  199  ls
+  200  ls -la
+  201  ls -la .gem/
+  202* 
+  203  vagrant plugin install /root/vagrant-libvirt/pkg/vagrant-libvirt-0.7.1.pre.34.gem --plugin-clean-sources
+  204  cd vagrant
+  205  ls
+  206  vi Gemfile
+  207  vi vagrant.gemspec 
+  208  bundle install
+  209  vi Gemfile.lock 
+  210  bundle --help
+  211  bundle update
+  212  vi vagrant.gemspec 
+  213  gem install nokogiri -v 1.6.2 -- --use-system-libraries
+  214  yum install libxml2 -y
+  215  gem install nokogiri -v 1.6.1 -- --use-system-libraries
+  216  vagrant plugin install /root/vagrant-libvirt/pkg/vagrant-libvirt-0.7.1.pre.34.gem --plugin-clean-sources
+  217  yum install fog-libvirt -y
+  218  gem install fog-libvirt
+  219  vagrant plugin install /root/vagrant-libvirt/pkg/vagrant-libvirt-0.7.1.pre.34.gem --plugin-clean-sources
+  220  gem install fog-libvirt -- --use-system-libraries
+  221  vagrant plugin install /root/vagrant-libvirt/pkg/vagrant-libvirt-0.7.1.pre.34.gem --plugin-clean-sources
+  222  bundle install fog-libvirt
+  223  vi Gemfile
+  224  ls
+  225  vi vagrant.gemspec 
+  226  bundle install
+  227  bundle install |grep fog-libvirt
+  228  vagrant plugin install /root/vagrant-libvirt/pkg/vagrant-libvirt-0.7.1.pre.34.gem --plugin-clean-sources
+  229  cd ..
+  230  ls
+  231  cd vagrant-kubernetes/
+  232  vagrant status
+  233  cd ..
+  234  history >> infra/install/vagrant-libvirt.hst
