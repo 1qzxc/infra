@@ -1,0 +1,14 @@
+[1002:6fdf] [1002:aaf0] rx580-2
+
+07:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Polaris 20 XL [Radeon RX 580 2048SP] [1002:6fdf] (rev ef)
+07:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere HDMI Audio [Radeon RX 470/480 / 570/580/590] [1002:aaf0]
+[root@fedora37 config]# driverctl set-override 0000:07:00.0 vfio-pci
+[root@fedora37 config]# driverctl set-override 0000:07:00.1 vfio-pci
+
+driverctl unset-override 0000:02:00.0
+driverctl unset-override 0000:02:00.1
+
+07:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Polaris 20 XL [Radeon RX 580 2048SP] [1002:6fdf] (rev ef)
+	07:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere HDMI Audio [Radeon RX 470/480 / 570/580/590] [1002:aaf0]
+
+[1002:6fdf] [1002:aaf0]
